@@ -1,39 +1,56 @@
-php7-fpm Ansible role
+php7-fpm Ansible role 
 =====================
 
-This role will install php7-fpm in Xenial (16.04)
+This role will install php7-fpm mainly for Drupal8 Deploment
+
+Dependencies
+------------
+- git@github.com:geerlingguy/ansible-role-repo-remi.git
 
 Requirements
 ------------
 
 Required packages (installed automatically) :
 
-  - php7-fpm
-  - php7.0-opcache
-  - php-apcu
-  - php7.0-mcrypt
-  - php7.0-gd
-  - php7.0-curl
-  - php-pear
-  - php7.0-mysql
+ - php-bcmath
+ - php-cli
+ - php-common
+ - php-dbg
+ - php-devel
+ - php-fpm
+ - php-gd
+ - php-intl
+ - php-json
+ - php-mbstring
+ - php-mysqlnd
+ - php-opcache
+ - php-pdo
+ - php-pecl-apcu
+ - php-pecl-apcu-bc
+ - php-pecl-igbinary
+ - php-pecl-memcached
+ - php-pecl-mongodb
+ - php-pecl-msgpack
+ - php-pecl-mysql
+ - php-pecl-xmldiff
+ - php-pecl-xmldiff-devel
+ - php-pecl-zip
+ - php-process
+ - php-xml
+ - php-xmlrpc
+ - php-runtime
 
 Role Variables
 --------------
 
-  - `php7_memory_limit`: max memory per PHP process (default: 128M)
-  - `php7_post_max_size`: max post size (default: 40M)
-  - `php7_upload_max_filesize`: max upload size for files (default: 20M)
-
+  - `php7_memory_limit`: max memory per PHP process (default: 512M)
+  - `php7_post_max_size`: max post size (default: 32M)
+  - `php7_upload_max_filesize`: max upload size for files (default: 32M)
 
 Tags
 ----
 
   - `php7-fpm` : applies to the whole role
-
-Dependencies
-------------
-
-  - git@github.com:leucos/ansible-nginx.git
 
 Example Playbook
 ----------------
@@ -59,4 +76,5 @@ Author Information
 ------------------
 
 @leucos
+@vorapoap
 
