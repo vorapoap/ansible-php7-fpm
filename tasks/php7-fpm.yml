@@ -1,37 +1,66 @@
-- name: Adds ondrej repos
-  apt_repository:
-    repo: "ppa:ondrej/php"
-    update_cache: yes
-
 - name: Show selected php7_version
   debug: 
-    msg: "Deploying php7 version {{ php7_version }}"
+    msg: "Deploying php7 version"
+
+- set_fact: enable_yum_fastestmirror_plugin=0
+- name: Disable YUM fastestmirror plugin
+  template: 
+    src: fastestmirror.conf.j2
+    dest: /etc/yum/pluginconf.d/fastestmirror.conf
 
 - name: Installs php7-fpm
-  apt:
-    pkg: "{{ item }}"
+  yum:
+    name: "{{ item }}"
     state: latest
     update_cache: yes
+    enablerepo: remi-php71
   notify:
-    - Restart php7-fpm
+    - Restart php-fpm
   with_items:
     - composer
-    - php{{ php7_version }}-fpm
-    - php-apcu
-    - php{{ php7_version }}-mcrypt
-    - php{{ php7_version }}-gd
-    - php{{ php7_version }}-curl
+    - php-bcmath
+    - php-cli
+    - php-common
+    - php-dbg
+    - php-devel
+    - php-fpm
+    - php-gd
+    - php-intl
+    - php-json
+    - php-mbstring
+    - php-mysqlnd
+    - php-opcache
+    - php-pdo
     - php-pear
-    - php{{ php7_version }}-mysql
-    - "[{{ php7_module_debs }}]"
+    - php-pecl-apcu
+    - php-pecl-apcu-bc
+    - php-pecl-igbinary
+    - php-pecl-memcached
+    - php-pecl-mongodb
+    - php-pecl-msgpack
+    - php-pecl-mysql
+    - php-pecl-xmldiff
+    - php-pecl-xmldiff-devel
+    - php-pecl-zip
+    - php-process
+    - php-xml
+    - php-xmlrpc
 
-- name: Adds php.ini
+- set_fact: enable_yum_fastestmirror_plugin=1
+- name: Re-enable YUM fastestmirror plugin
   template:
-    src: "../templates/php.ini.j2"
-    dest: /etc/php/{{ php7_version }}/fpm/php.ini
+    src: fastestmirror.conf.j2
+    dest: /etc/yum/pluginconf.d/fastestmirror.conf
+
+
+
+- name: Copy php.ini
+  copy: 
+    src: ./
+    dest: /etc/
     backup: yes
   notify:
-    - Restart php7-fpm
+    - Restart php-fpm
 
 - name: Checks if nginx is already installed
   stat:
@@ -44,15 +73,15 @@
     dest: /etc/nginx/conf.d/fastcgi_buffers.conf
   when: __nginx_config_dir is defined and __nginx_config_dir.isdir is defined and __nginx_config_dir.isdir
   notify:
-    - Restart php7-fpm
+    - Restart php-fpm
     - Restart nginx
 
-- name: Adds pear channels
-  shell: pear channel-discover {{ item }}
-  with_items: pear.channels
-  when: pear is defined
+#- name: Adds pear channels
+#  shell: pear channel-discover {{ item }}
+#  with_items: pear.channels
+#  when: pear is defined
 
-- name: Adds pear packages
-  shell: pear install {{ item }}
-  with_items: pear.packages
-  when: pear is defined
+#- name: Adds pear packages
+#  shell: pear install {{ item }}
+#  with_items: pear.packages
+#  when: pear is defined
